@@ -1,0 +1,10 @@
+__pycache__/
+platypus/__pycache__/
+
+Platypus_Cache/
+platypus_int/
+platypus_utils/
+
+Environment.json
+
+
