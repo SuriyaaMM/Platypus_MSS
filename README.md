@@ -1,54 +1,94 @@
-# Platypus: A Semantic Document Search and Indexing Platform for MongoDB
+# 🦫 Platypus: Semantic Document Search and Indexing Engine
 
-I wrote this to Learn about Retrieval Augmented Generation and Similarity Search.
-Initially I though to develop this into an Full Fledged app using streamlit, but then
-due to time constraints, I am just converting this into one that supports
-FAISS for MongoDB
+**Platypus** is a modular semantic search system designed to perform deep analysis on documents — currently optimized for Arxiv PDFs. It extracts, embeds, indexes, and enables similarity search using FAISS and Sentence Transformers, backed by MongoDB for document storage.
 
-## **NOTE**:
-- Currently it stores only Arxiv Database, which this was made for, in future maybe
-we can plan to support multiple databases
+---
 
-## Current Stage Features
+## 🚧 Current Status
 
-At its current stage, Platypus provides the following core functionalities:
+> ⚠️ Currently supports **only Arxiv PDFs**. Support for other sources (e.g., Springer, IEEE) is planned for future versions.
 
-1.  **PDF Text Extraction:**
-    * Utilizes `PyMuPDF` to extract raw text and specific sections (like abstracts) from PDF documents.
-    * Handles temporary file management during extraction.
+---
 
-2.  **Document Management with MongoDB:**
-    * `MongoDBManager` facilitates seamless connection to a MongoDB instance.
-    * Supports inserting and managing documents (e.g., Arxiv paper metadata) within specified collections.
-    * Designed to store and retrieve rich document information.
+## ✨ Core Features
 
-3.  **Semantic Embedding Generation:**
-    * `Embedder` class initializes and manages Sentence Transformer models (e.g., `all-MiniLM-L6-v2`) to convert text into high-dimensional numerical vectors (embeddings).
-    * `ChunkVectorizer` handles chunking of longer texts using LangChain's `RecursiveCharacterTextSplitter` and then vectorizes these chunks using the `Embedder`. This allows for fine-grained semantic representation.
+### 1. 🧾 PDF Text Extraction
 
-4.  **FAISS Indexing and Search:**
-    * `FAISSIndexer` builds and manages a FAISS (Facebook AI Similarity Search) index.
-    * Efficiently adds document embeddings to a flat L2 index (`IndexFlatL2`).
-    * **Persistence:** Supports saving the FAISS index and its corresponding document metadata (Title, URL) to disk, and loading them back for persistent search capabilities without re-indexing.
-    * **Semantic Search:** Enables performing semantic similarity searches using natural language queries against the indexed document embeddings, returning the most relevant results based on vector distance.
+* Uses **PyMuPDF** to extract raw text and structured sections (e.g., abstracts).
+* Handles temporary file management safely during extraction.
 
-5.  **Language Model Integration (Basic):**
-    * `Infer` class includes a basic setup for interacting with a large language model (LLM) for query generation based on document analysis. This is a foundational element for future AI-powered enhancements.
+### 2. 📦 Document Management via MongoDB
 
-## Architecture Highlights
+* `MongoDBManager` provides seamless interaction with a MongoDB instance.
+* Supports insertion and querying of rich document metadata (title, URL, abstract, etc.).
+* Organizes documents into collections (e.g., `arxiv-papers`).
 
-The project follows a modular architecture, with clear separation of concerns:
+### 3. 🧠 Semantic Embedding Generation
 
-* `platypus/PDFAnalyzer/`: Contains modules for PDF extraction (`Extractor.py`) and text vectorization (`Vectorizer.py`).
-* `platypus/Database/`: Manages MongoDB interactions (`Database.py`) and FAISS indexing (`Indexer.py`).
-* `platypus/LLM/`: Houses the language model inference capabilities (`Infer.py`).
-* `platypus/Utils/`: Provides foundational utilities and configurations (`Foundation.py`).
-* `platypus/Similarity/`: Contains components for similarity detection (`Similarity.py`).
+* `Embedder`: Loads transformer models (e.g., `all-MiniLM-L6-v2`) to generate dense embeddings.
+* `ChunkVectorizer`: Uses LangChain's `RecursiveCharacterTextSplitter` to break long texts into chunks, enabling fine-grained embedding.
 
-## Getting Started (Prerequisites)
+### 4. 🔍 FAISS Indexing & Search
 
-To run this project, you will need:
+* `FAISSIndexer` builds and manages a **FAISS IndexFlatL2** for similarity search.
+* Adds chunk embeddings to the index with associated metadata.
+* **Persistence**: Index + metadata can be saved to disk and reloaded.
+* **Semantic Search**: Natural language queries return top-k most semantically similar document chunks.
 
-* Python 3.11+ & `conda`
-* MongoDB installed and running locally (or access to a remote instance).
-* Use `Environment.yaml` to install pre-requisites, git clone and run Main.py
+### 5. 🤖 Language Model Integration (Foundational)
+
+* The `Infer` module introduces basic interaction with a large language model.
+* Currently used for experimental query generation and understanding.
+* Lays the groundwork for future AI-augmented querying.
+
+---
+
+## 🧱 Project Structure
+
+```bash
+platypus/
+├── PDFAnalyzer/        
+│   ├── Extractor.py
+│   └── Vectorizer.py
+├── Database/           
+│   ├── Database.py
+│   └── Indexer.py
+├── LLM/               
+│   └── Infer.py
+├── Similarity/         
+│   └── Similarity.py
+├── Utils/              
+│   └── Foundation.py
+├── Main.py             
+└── Environment.yaml    
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 🧪 Prerequisites
+
+* Python **3.11+**
+* `conda`
+* A running MongoDB instance (local or remote)
+
+### 🔧 Installation
+
+```bash
+git clone https://github.com/yourusername/platypus.git
+cd platypus
+conda env create -f Environment.yaml
+conda activate platypus
+python Main.py
+```
+
+---
+
+## 📌 Notes
+
+* All vector indexing uses `FAISS IndexFlatL2` (L2 distance).
+* Embeddings generated using HuggingFace Sentence Transformers.
+* Chunks are associated with metadata (title, arxiv ID, etc.) for contextual search.
+
+---
